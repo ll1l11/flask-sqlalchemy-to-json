@@ -1,8 +1,10 @@
-from datetime import datetime
+from datetime import datetime, date, time
+import decimal
+import uuid
 import json
 
 from flask import Flask, request, flash, url_for, redirect, \
-     render_template, abort, jsonify
+     render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -22,7 +24,7 @@ class CustomJSONEncoder(json.JSONEncoder):
 
 
 app = Flask(__name__)
-app.json_encoder = CustomJSONEncoder
+# app.json_encoder = CustomJSONEncoder
 app.config.from_pyfile('hello.cfg')
 db = SQLAlchemy(app)
 
@@ -53,11 +55,10 @@ def create_all():
     print(r)
     return 'create all'
 
+
 @app.route('/')
 def show_all():
-    return render_template('show_all.html',
-        todos=Todo.query.order_by(Todo.pub_date.desc()).all()
-    )
+    return render_template('show_all.html', todos=Todo.query.order_by(Todo.pub_date.desc()).all())
 
 
 @app.route('/new', methods=['GET', 'POST'])
@@ -90,6 +91,6 @@ def item(todo_id):
     todo = Todo.query.get_or_404(todo_id)
     return jsonify(todo.to_dict())
 
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-
